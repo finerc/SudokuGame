@@ -1,11 +1,13 @@
 package lieuzz.zjgs.com.magicapp.Util;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by Administrator on 2018/4/9.
  */
 
-public class Game {
-    private int gameid;
+public class Game extends DataSupport{
+    //private int gameid;
     private int time;
     private int timelong;
 
@@ -15,13 +17,13 @@ public class Game {
     private int spe;
     private int hell;
 
-    public int getId(){
+    /*public int getId(){
         return gameid;
-    }
+    }*/
 
-    public void setId(int id){
+    /*public void setId(int id){
         this.gameid = id;
-    }
+    }*/
 
     public int getTime(){
         return time;

@@ -6,13 +6,15 @@ package lieuzz.zjgs.com.magicapp.Util;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.widget.Toast;
 
 
 public class MyGame {
 
     Context context;
     private int rank = 1;
-    String data1="200680507" +
+    /*String data1="200680507" +
             "900000012" +
             "748000060" +
             "387490000" +
@@ -56,11 +58,14 @@ public class MyGame {
             "010006200" +
             "800740000" +
             "000000600" +
-            "000003700";
+            "000003700";*/
     int numbers[][] =new int[9][9];
     public MyGame(int rank){
         //初始化data
-        for(int i=0;i<9;i++)
+        SudokuGenerater mGenerater = new SudokuGenerater(rank);
+        mGenerater.DiggingHoles();
+        numbers = mGenerater.PuzzleBoard;
+       /* for(int i=0;i<9;i++)
             for(int j=0;j<9;j++)
             {
                 switch (rank)
@@ -83,7 +88,7 @@ public class MyGame {
                 }
 
 
-            }
+            }*/
     }
 
     //得到值
@@ -128,18 +133,24 @@ public class MyGame {
     public void setTitle(int i,int x,int y){
         numbers[x][y]=i;
     }
+
     //判断游戏结束
-    public void youWin(){
+    public boolean youWin(){
         int t=0;
         for (int i=0;i<9;i++){
             for (int j=0;j<9;j++){
                 if (numbers[i][j]!=0){
                     t++;
+
                 }
             }
         }
+        Log.d("TNumber",String.valueOf(t));
         if (t==81){
-            AlertDialog.Builder builder=new AlertDialog.Builder(context);
+
+            return true;
+
+            /*AlertDialog.Builder builder=new AlertDialog.Builder(context);
             builder.setTitle("Tips")
                     .setMessage("You Win !")
                     .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
@@ -153,7 +164,8 @@ public class MyGame {
                         public void onClick(DialogInterface dialog, int which) {
                             System.exit(0);
                         }
-                    }).show();
+                    }).show();*/
         }
+        return false;
     }
 }

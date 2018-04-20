@@ -3,7 +3,9 @@ package lieuzz.zjgs.com.magicapp.Util;
 /**
  * Created by Administrator on 2018/4/8.
  */
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -119,7 +121,25 @@ public class NewView extends View{
     public void setTitle(int i){
         mGame.setTitle(i,selectX,selectY);
         invalidate();  //每次填写一个数 都要重新进行绘制
-        mGame.youWin();
+        if( mGame.youWin() == true)
+        {
+            AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+            builder.setTitle("Tips")
+                    .setMessage("You Win !")
+                    .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    }).show();
+        }
+       ;
     }
 
     public void setRank(int rank){

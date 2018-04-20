@@ -5,14 +5,19 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
+
+import java.util.List;
 
 import lieuzz.zjgs.com.magicapp.R;
+import lieuzz.zjgs.com.magicapp.Util.Game;
 import lieuzz.zjgs.com.magicapp.Util.HardnessDialog;
 import lieuzz.zjgs.com.magicapp.Util.NewView;
 
@@ -21,7 +26,7 @@ import static java.security.AccessController.getContext;
 public class sudoku extends AppCompatActivity {
     Button choose, data;
     Button easy,normal,hard,specialist,hell,cancel;
-    TextView title,back;
+    TextView title,back,gameTime,gameLong;
     private int recLen = 0;
     private TextView txtView;
     @Override
@@ -36,6 +41,7 @@ public class sudoku extends AppCompatActivity {
         final NewView newView = (NewView) findViewById(R.id.new_view);
         final AlertDialog.Builder builder = new AlertDialog.Builder(sudoku.this);
         final View view = View.inflate(sudoku.this,R.layout.hardness_table,null);
+
         builder.setView(view);
         initBtn(view);
         handler.postDelayed(runnable, 1000);
@@ -46,6 +52,8 @@ public class sudoku extends AppCompatActivity {
         final View view2 = View.inflate(sudoku.this,R.layout.data_table,null);
         builder2.setView(view2);
         back = (TextView) view2.findViewById(R.id.back);
+        gameTime = (TextView) view2.findViewById(R.id.game_times);
+        gameLong = (TextView) view2.findViewById(R.id.game_time_long);
         final AlertDialog dialog2 = builder2.create();
         dialog2.setCanceledOnTouchOutside(false);
 
@@ -79,6 +87,16 @@ public class sudoku extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog2.show();
+                int dTime = 0;
+                List<Game> games = DataSupport.findAll(Game.class);
+                for(Game game: games){
+                    Log.d("Mmmmmmmmm",String.valueOf(game.getTime()));
+                    dTime = game.getTime();
+
+                }
+                gameTime.setText(String.valueOf(dTime));
+
+
             }
         });
 
@@ -99,6 +117,10 @@ public class sudoku extends AppCompatActivity {
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                dataT();
+
+                //Log.d("gggggggggg",String.valueOf(game.getTime()));
                 recLen = 0;
                 newView.setRank(1);
                 newView.invalidate();
@@ -109,6 +131,7 @@ public class sudoku extends AppCompatActivity {
         normal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dataT();
                 recLen = 0;
                 newView.setRank(2);
                 newView.invalidate();
@@ -119,6 +142,7 @@ public class sudoku extends AppCompatActivity {
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dataT();
                 recLen = 0;
                 newView.setRank(3);
                 newView.invalidate();
@@ -129,6 +153,7 @@ public class sudoku extends AppCompatActivity {
         specialist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dataT();
                 recLen = 0;
                 newView.setRank(4);
                 newView.invalidate();
@@ -139,6 +164,7 @@ public class sudoku extends AppCompatActivity {
         hell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dataT();
                 recLen = 0;
                 newView.setRank(5);
                 newView.invalidate();
@@ -167,8 +193,35 @@ public class sudoku extends AppCompatActivity {
             recLen++;
             txtView.setText("" + recLen / 60 + ":" + recLen % 60);
             handler.postDelayed(this, 1000);
+
+            Game game1 = new Game();
+            List<Game> games = DataSupport.findAll(Game.class);
+            for(Game game: games){
+                int dTime;
+                Log.d("Mmmmmmmmm",String.valueOf(game.getTimelong()));
+                dTime = game.getTimelong()+1;
+                game1.setTimelong(dTime);
+                game1.updateAll();
+
+                gameLong.setText("" + dTime / 60 + ":" + dTime % 60);
+            }
+
+
         }
     };
+
+    public void dataT(){
+        Game game1 = new Game();
+        List<Game> games = DataSupport.findAll(Game.class);
+        for(Game game: games){
+            int dTime;
+            Log.d("Mmmmmmmmm",String.valueOf(game.getTime()));
+            dTime = game.getTime();
+            game1.setTime(dTime+1);
+            game1.updateAll();
+        }
+
+    }
 
 
 }
