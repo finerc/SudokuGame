@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:stretchColumns="*" >
 
     <TableRow
@@ -13,7 +13,6 @@
         <TextView
             android:text="Total Games-"
             android:textSize="25dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -22,7 +21,7 @@
             android:id="@+id/game_times"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="0dp"
             android:text="11"
             android:textSize="30dp"></TextView>
     </TableRow>
@@ -35,7 +34,6 @@
         <TextView
             android:text="Total Time-"
             android:textSize="25dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -43,7 +41,7 @@
         <TextView
             android:id="@+id/game_time_long"
             android:text="10:00"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="0dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -59,7 +57,6 @@
             android:text="easy best-"
             android:textSize="30dp"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -67,7 +64,7 @@
         <TextView
             android:id="@+id/easy_best"
             android:text="4:15"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginTop="30dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
@@ -83,7 +80,6 @@
         <TextView
             android:text="normal best-"
             android:textSize="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -91,7 +87,7 @@
         <TextView
             android:id="@+id/normal_best"
             android:text="0"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -106,7 +102,6 @@
         <TextView
             android:text="hard best-"
             android:textSize="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -114,7 +109,7 @@
         <TextView
             android:id="@+id/hard_best"
             android:text="0"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -129,7 +124,6 @@
         <TextView
             android:text="specialist best-"
             android:textSize="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -137,7 +131,7 @@
         <TextView
             android:id="@+id/specialist_best"
             android:text="0"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -152,7 +146,6 @@
         <TextView
             android:text="hell best-"
             android:textSize="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -160,7 +153,7 @@
         <TextView
             android:id="@+id/hell_best"
             android:text="0"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -173,7 +166,6 @@
         android:layout_height="wrap_content" >
         <TextView
             android:textSize="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1">
@@ -183,7 +175,7 @@
             android:id="@+id/back"
             android:text="back"
             android:clickable="true"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">

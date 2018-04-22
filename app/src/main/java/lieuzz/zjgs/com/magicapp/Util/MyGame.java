@@ -3,6 +3,7 @@ package lieuzz.zjgs.com.magicapp.Util;
 /**
  * Created by Administrator on 2018/4/8.
  */
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -60,37 +61,38 @@ public class MyGame {
             "000000600" +
             "000003700";*/
     int numbers[][] =new int[9][9];
-    public MyGame(int rank){
+    SudokuGenerater mGenerater;
+    /////////////////////////////
+    int map[][] = new int[9][9];
+    int select[] = new int[10];
+    int mask[][][] = new int[9][9][9];
+    int isMask[][] = new int[9][9];
+
+    int[][] dig = new int[9][9];
+    //////////////////////////////////
+
+    public MyGame(int rank, Context _context){
         //初始化data
-        SudokuGenerater mGenerater = new SudokuGenerater(rank);
+        context = _context;
+        mGenerater = new SudokuGenerater(rank, context);
         mGenerater.DiggingHoles();
         numbers = mGenerater.PuzzleBoard;
-       /* for(int i=0;i<9;i++)
-            for(int j=0;j<9;j++)
-            {
-                switch (rank)
-                {
-                    case 1:
-                        numbers[i][j]=data1.charAt(i+j*9)-'0'; //字符转化为整形
-                        break;
-                    case 2:
-                        numbers[i][j]=data2.charAt(i+j*9)-'0'; //字符转化为整形
-                        break;
-                    case 3:
-                        numbers[i][j]=data3.charAt(i+j*9)-'0'; //字符转化为整形
-                        break;
-                    case 4:
-                        numbers[i][j]=data4.charAt(i+j*9)-'0'; //字符转化为整形
-                        break;
-                    case 5:
-                        numbers[i][j]=data5.charAt(i+j*9)-'0'; //字符转化为整形
-                        break;
-                }
-
-
-            }*/
+        dig = mGenerater.DigBoard;
+        for(int i=0;i<9;i++) {
+            for (int j = 0; j < 9; j++) {
+                map[i][j] = numbers[i][j];
+            }
+            select[i] = 0;
+        }
     }
 
+    //得到值
+    public String getMapNumber(int x,int y){
+        if(map[x-1][y-1]==0)
+            return "";
+        else
+            return ""+map[x-1][y-1];
+    }
     //得到值
     public String getNumber(int x,int y){
         if(numbers[x-1][y-1]==0)
@@ -98,6 +100,42 @@ public class MyGame {
         else
             return ""+numbers[x-1][y-1];
     }
+
+    public int getMask(int x,int y,int k)
+    {
+        return mask[x-1][y-1][k-1];
+    }
+
+
+    //是否被选中
+    public boolean isSelected(int x,int y){
+        if(select[numbers[x-1][y-1]]==0)
+            return false;
+        else
+            return true;
+    }
+
+    //该位置是否待填数字
+    public boolean isDigged(int x,int y){
+        if(dig[x-1][y-1]==0)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isMask(int x,int y)
+    {
+        if(isMask[x-1][y-1]<=1)
+            return false;
+        else
+            return true;
+    }
+
+    //设置选中
+    public void setSelect(int x, int i){
+        select[x] = i;
+    }
+
     //算出已经被用的数字
     public int[] getUsed(int x,int y){
         int c[]=new int[9];
@@ -131,7 +169,44 @@ public class MyGame {
     }
     //设置选定的数字
     public void setTitle(int i,int x,int y){
-        numbers[x][y]=i;
+        if(numbers[x][y] == i)
+        {
+            numbers[x][y] = 0;
+            mask[x][y][i - 1] = 0;
+            isMask[x][y]--;
+            return;
+        }
+        if(!mGenerater.isNoConflict(numbers,i,x,y))
+            return;
+        if(isMask[x][y]==0)        //如果原来标记为0则直接设置一个数字
+        {
+            numbers[x][y] = i;
+            mask[x][y][i-1] = 1;
+            isMask[x][y]++;
+
+        }
+        else
+        {
+            if(mask[x][y][i-1]==1)
+            {
+                mask[x][y][i - 1] = 0;
+                isMask[x][y]--;
+            }
+            else {
+                mask[x][y][i - 1] = 1;
+                isMask[x][y]++;
+            }
+            if(isMask[x][y]==1)
+            {
+                for(int j=0;j<9;j++)
+                {
+                    if(mask[x][y][j]==1)
+                        numbers[x][y] = j+1;
+                }
+            }
+            else
+                numbers[x][y] = 0;
+        }
     }
 
     //判断游戏结束

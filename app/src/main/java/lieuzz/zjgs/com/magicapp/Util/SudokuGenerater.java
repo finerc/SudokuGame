@@ -1,12 +1,21 @@
 package lieuzz.zjgs.com.magicapp.Util;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Random;
 
 public class SudokuGenerater {
 
     int rank;
+    Context mContext;
     int[][] FinalBoard = new int[9][9];     //存放终盘， 可作为答案显示(使用回溯法生成）
     int[][] PuzzleBoard = new int[9][9];    //存放待解数独局面
     int[][] DigBoard = new int[9][9];   //“挖洞”矩阵
@@ -23,6 +32,8 @@ public class SudokuGenerater {
             firstRow[x] = temp;
         }
         FinalBoard[0] = firstRow;
+        for(int i=1;i<9;i++)
+            Arrays.fill(FinalBoard[i],0);
     }
 
     boolean isRowNoConflict(int[][] grid, int value, int row)      //判断行内有无冲突
@@ -86,14 +97,17 @@ public class SudokuGenerater {
         return false;
     }
 
-    SudokuGenerater(int _rank)
+    SudokuGenerater(int _rank, Context context)
     {
         this.rank = _rank;
+        mContext = context;
         initFinalBoard();
         while(!SudokuSolver(this.FinalBoard,0, 0))
         {
             initFinalBoard();
         }
+        for(int i=0;i<9;i++)
+            Arrays.fill(DigBoard[i],1);
         for(int i=0;i<9;i++)
             System.arraycopy(FinalBoard[i],0,PuzzleBoard[i],0,FinalBoard[i].length);
     }
@@ -113,19 +127,43 @@ public class SudokuGenerater {
                 holeslimit = 26;
                 break;
             case 2:
-                holes = rand.nextInt(14)+32;     //holes:32-45
+                holes = rand.nextInt(9)+32;     //holes:32-40
                 holeslimit = 32;
                 break;
             case 3:
-                holes=rand.nextInt(4)+46;       //holes:46-49
-                holeslimit = 46;
+                holes=rand.nextInt(9)+41;       //holes:41-49
+                holeslimit = 41;
                 break;
             case 4:
-                holes = rand.nextInt(4)+50;     //holes:50-53
-                holeslimit = 50;
-                break;
+                /*holes = rand.nextInt(4)+50;     //holes:50-53
+                holeslimit = 50;*/
+                InputStream is = null;
+                try {
+                    AssetManager aM = mContext.getAssets();
+                    int i = rand.nextInt(20)+1;
+                    String specialistfile = "specialist" + i+".txt";
+                    is = aM.open(specialistfile);
+                }catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                setBoardByText(is);
+                return;
             case 5:             //evil
-                holes = rand.nextInt(6)+54;     //givens amount 22-27
+                InputStream in = null;
+                try {
+                    AssetManager aM = mContext.getAssets();
+                    int i = rand.nextInt(20)+1;
+                    String evilfile = "evil" + i+".txt";
+                    in = aM.open(evilfile);
+                }catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                setBoardByText(in);
+                return;
+                /*holes = rand.nextInt(6)+54;     //givens amount 22-27
+                holeslimit = 54;
                 digRow = 0;
                 digColumn = 0;
                 while(holeCount<holes)
@@ -159,7 +197,7 @@ public class SudokuGenerater {
                     }
                     digColumn++;
                 }
-                break;
+                return;*/
             default:
         }
         while(holeCount<holes)
@@ -174,6 +212,7 @@ public class SudokuGenerater {
                 Log.d("digRow",Integer.toString(digRow));
                 Log.d("digColumn",Integer.toString(digColumn));
                 PuzzleBoard[digRow][digColumn] = 0;
+                DigBoard[digRow][digColumn] = 0;
                 holeCount++;
             }
             Log.d("holeCount", Integer.toString(holeCount));
@@ -186,6 +225,8 @@ public class SudokuGenerater {
                 {
                     initFinalBoard();
                 }
+                for(int i=0;i<9;i++)
+                    Arrays.fill(DigBoard[i],1);
                 for(int i=0;i<9;i++)
                     System.arraycopy(FinalBoard[i],0,PuzzleBoard[i],0,FinalBoard[i].length);
                 WholeCount = 0;
@@ -215,5 +256,34 @@ public class SudokuGenerater {
             }
         }
         return true;
+    }
+
+    public void setBoardByText(InputStream inputStream) {
+        InputStreamReader inputStreamReader = null;
+        try {
+            inputStreamReader = new InputStreamReader(inputStream, "gbk");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        BufferedReader reader = new BufferedReader(inputStreamReader);
+        StringBuffer sb = new StringBuffer("");
+        String line;
+        try {
+            int row = 0;
+            while ((line = reader.readLine()) != null) {
+                String[] temp = line.split("\t");
+                for(int j=0;j<temp.length;j++){
+                    this.PuzzleBoard[row][j] = Integer.parseInt(temp[j]);
+                    if(Integer.parseInt(temp[j])==0)
+                        this.DigBoard[row][j] = 0;
+                    else
+                        this.DigBoard[row][j] = 1;
+
+                }
+                row++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package lieuzz.zjgs.com.magicapp.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import java.util.List;
 import lieuzz.zjgs.com.magicapp.R;
 import lieuzz.zjgs.com.magicapp.Util.Game;
 import lieuzz.zjgs.com.magicapp.Util.HardnessDialog;
+import lieuzz.zjgs.com.magicapp.Util.MyGame;
 import lieuzz.zjgs.com.magicapp.Util.NewView;
 
 import static java.security.AccessController.getContext;
@@ -26,14 +28,15 @@ import static java.security.AccessController.getContext;
 public class sudoku extends AppCompatActivity {
     Button choose, data;
     Button easy,normal,hard,specialist,hell,cancel;
-    TextView title,back,gameTime,gameLong;
+    TextView title,back;
+    TextView gameTime,gameLong,easyBest, normalBest,hardBest, speBest,hellBest;
     private int recLen = 0;
-    private TextView txtView;
+    public static TextView txtView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //setContentView(new NewView(this));
         setContentView(R.layout.activity_sudoku);
         txtView = (TextView)findViewById(R.id.text_time);
         title = (TextView) findViewById(R.id.title);
@@ -57,6 +60,69 @@ public class sudoku extends AppCompatActivity {
         final AlertDialog dialog2 = builder2.create();
         dialog2.setCanceledOnTouchOutside(false);
 
+        easyBest = (TextView) view2.findViewById(R.id.easy_best);
+        normalBest = (TextView) view2.findViewById(R.id.normal_best);
+        hardBest = (TextView) view2.findViewById(R.id.hard_best);
+        speBest = (TextView) view2.findViewById(R.id.specialist_best);
+        hellBest = (TextView) view2.findViewById(R.id.hell_best);
+
+        ////////////////////////////////////////////////
+        LitePal.getDatabase();
+        List<Game> games = DataSupport.findAll(Game.class);
+        if(games.size() == 0) {
+            Game game = new Game();
+            game.setTime(1);
+            game.setTimelong(0);
+            game.setEasy(0);
+            game.setNormal(0);
+            game.setHard(0);
+            game.setSpe(0);
+            game.setHell(0);
+            game.save();
+        }
+        dataT(newView.mGame);
+
+        Intent getI = getIntent();
+        if(getI.getStringExtra("rank")!=null) {
+            int i = Integer.parseInt(getI.getStringExtra("rank"));
+            String s = getI.getStringExtra("recLen");
+            String time[] = s.split(":");
+            int number = Integer.parseInt(time[0])*60+Integer.parseInt(time[1]);
+            Log.d("number", ""+number);
+            Game game1 = new Game();
+            for (Game game : games) {
+                int easy = game.getEasy();
+                int normal = game.getNormal();
+                int hard = game.getHard();
+                int spe = game.getSpe();
+                int hell = game.getHell();
+                Log.d("wowwwwwww", i+"");
+                switch (i) {
+                    case 1:
+                        if (number < easy || easy == 0)
+                            game1.setEasy(number);
+                        break;
+                    case 2:
+                        if (number < normal || normal == 0)
+                            game1.setNormal(number);
+                        break;
+                    case 3:
+                        if (number < hard || hard == 0)
+                            game1.setHard(number);
+                        break;
+                    case 4:
+                        if (number < spe || spe == 0)
+                            game1.setSpe(number);
+                        break;
+                    case 5:
+                        if (number < hell || hell == 0)
+                            game1.setHell(number);
+                        break;
+                }
+            }
+            game1.updateAll();
+        }
+        ////////////////////////////////////////////
 
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,16 +153,23 @@ public class sudoku extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog2.show();
-                int dTime = 0;
+                int times=0, timeLong=0, easy=0, normal=0, hard=0, spe=0, hell=0;
                 List<Game> games = DataSupport.findAll(Game.class);
                 for(Game game: games){
-                    Log.d("Mmmmmmmmm",String.valueOf(game.getTime()));
-                    dTime = game.getTime();
-
+                    Log.d("game.getTime",String.valueOf(game.getTime()));
+                    times = game.getTime();
+                    easy = game.getEasy();
+                    normal = game.getNormal();
+                    hard = game.getHard();
+                    spe = game.getSpe();
+                    hell = game.getHell();
                 }
-                gameTime.setText(String.valueOf(dTime));
-
-
+                gameTime.setText(String.valueOf(times));
+                easyBest.setText("" + easy / 60 + ":" + easy % 60);
+                normalBest.setText("" + normal / 60 + ":" + normal % 60);
+                hardBest.setText("" + hard / 60 + ":" + hard % 60);
+                speBest.setText("" + spe / 60 + ":" + spe % 60);
+                hellBest.setText("" + hell / 60 + ":" + hell% 60);
             }
         });
 
@@ -118,20 +191,19 @@ public class sudoku extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                dataT();
-
                 //Log.d("gggggggggg",String.valueOf(game.getTime()));
                 recLen = 0;
                 newView.setRank(1);
                 newView.invalidate();
                 title.setText("Easy");
                 dialog.hide();
+                dataT(newView.mGame);
             }
         });
         normal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataT();
+                dataT(newView.mGame);
                 recLen = 0;
                 newView.setRank(2);
                 newView.invalidate();
@@ -142,7 +214,7 @@ public class sudoku extends AppCompatActivity {
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataT();
+                dataT(newView.mGame);
                 recLen = 0;
                 newView.setRank(3);
                 newView.invalidate();
@@ -153,7 +225,7 @@ public class sudoku extends AppCompatActivity {
         specialist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataT();
+                dataT(newView.mGame);
                 recLen = 0;
                 newView.setRank(4);
                 newView.invalidate();
@@ -164,7 +236,7 @@ public class sudoku extends AppCompatActivity {
         hell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataT();
+                dataT(newView.mGame);
                 recLen = 0;
                 newView.setRank(5);
                 newView.invalidate();
@@ -186,8 +258,8 @@ public class sudoku extends AppCompatActivity {
         cancel = (Button) view.findViewById(R.id.cancel);
     }
 
-    Handler handler = new Handler();
-    Runnable runnable = new Runnable() {
+    public Handler handler = new Handler();
+    public Runnable runnable = new Runnable() {
         @Override
         public void run() {
             recLen++;
@@ -196,32 +268,28 @@ public class sudoku extends AppCompatActivity {
 
             Game game1 = new Game();
             List<Game> games = DataSupport.findAll(Game.class);
-            for(Game game: games){
+            for(Game game: games) {
                 int dTime;
-                Log.d("Mmmmmmmmm",String.valueOf(game.getTimelong()));
-                dTime = game.getTimelong()+1;
+                Log.d("game.getTimelong", String.valueOf(game.getTimelong()));
+                dTime = game.getTimelong() + 1;
                 game1.setTimelong(dTime);
                 game1.updateAll();
-
                 gameLong.setText("" + dTime / 60 + ":" + dTime % 60);
             }
-
-
         }
     };
 
-    public void dataT(){
+    ///////////////////////////////
+    public void dataT(MyGame mGame){
         Game game1 = new Game();
         List<Game> games = DataSupport.findAll(Game.class);
-        for(Game game: games){
-            int dTime;
-            Log.d("Mmmmmmmmm",String.valueOf(game.getTime()));
-            dTime = game.getTime();
-            game1.setTime(dTime+1);
+        for(Game game: games) {
+            int times;
+            times = game.getTime();
+
+            game1.setTime(times+1);
             game1.updateAll();
         }
-
     }
-
-
+    /////////////////////////////////
 }
