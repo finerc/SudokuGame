@@ -48,7 +48,7 @@ public class MyDialog extends Dialog{
         for(int i=0;i<9;i++)
         {
             if(used[i]!=0)
-                keys[used[i]-1].setVisibility(View.VISIBLE); //将不可使用的数字对应的Button设置为隐藏
+                keys[used[i]-1].setVisibility(View.INVISIBLE); //将不可使用的数字对应的Button设置为隐藏
         }
     }
 }

@@ -46,9 +46,10 @@ public class SudokuGenerater {
 
     boolean isColumnNoConflict(int[][] grid, int value,int column)      //判断列内有无冲突
     {
-        for(int i=0;i<9;i++)
-            if(grid[i][column]==value)
+        for(int i=0;i<9;i++) {
+            if (grid[i][column] == value)
                 return false;
+        }
         return true;
     }
 
@@ -276,9 +277,6 @@ public class SudokuGenerater {
                     this.PuzzleBoard[row][j] = Integer.parseInt(temp[j]);
                     if(Integer.parseInt(temp[j])==0)
                         this.DigBoard[row][j] = 0;
-                    else
-                        this.DigBoard[row][j] = 1;
-
                 }
                 row++;
             }

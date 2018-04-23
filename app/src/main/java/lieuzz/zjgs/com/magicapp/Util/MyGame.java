@@ -142,7 +142,7 @@ public class MyGame {
         //x列
         for(int i=0;i<9;i++)
         {
-            if(numbers[x][i]!=0)
+            if(dig[x][i]!=0)
             {
                 c[numbers[x][i]-1]=numbers[x][i];
             }
@@ -150,7 +150,7 @@ public class MyGame {
         //y排
         for(int i=0;i<9;i++)
         {
-            if(numbers[i][y]!=0)
+            if(dig[i][y]!=0)
             {
                 c[numbers[i][y]-1]=numbers[i][y];
             }
@@ -160,13 +160,94 @@ public class MyGame {
         y=(y/3)*3;
         for(int i=0;i<9;i++)
         {
-            if(numbers[x+i%3][y+i/3]!=0)
+            if(dig[x+i%3][y+i/3]!=0)
             {
                 c[numbers[x+i%3][y+i/3]-1]=numbers[x+i%3][y+i/3];
             }
         }
         return c;
     }
+
+    public boolean notUsed(int x,int y,int v){
+        int c[]=new int[9];
+        //x列
+        for(int i=0;i<9;i++)
+        {
+            if(i==y)
+                continue;
+            if(dig[x][i]!=0)
+            {
+                if(v==numbers[x][i])
+                    return false;
+            }
+        }
+        //y排
+        for(int i=0;i<9;i++)
+        {
+            if(i==x)
+                continue;
+            if(dig[i][y]!=0)
+            {
+                if(v==numbers[i][y])
+                    return false;
+            }
+        }
+        //小九宫格
+        int x0=(x/3)*3;
+        int y0=(y/3)*3;
+        for(int i=0;i<9;i++)
+        {
+            if(x0+i%3==x&&y0+i/3==y)
+                continue;
+            if(dig[x0+i%3][y0+i/3]!=0)
+            {
+                if(v==numbers[x0+i%3][y0+i/3])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean notUsedIncluDig(int x,int y,int v){
+        int c[]=new int[9];
+        //x列
+        for(int i=0;i<9;i++)
+        {
+            if(i==y)
+                continue;
+            if(numbers[x][i]!=0)
+            {
+                if(v==numbers[x][i])
+                    return false;
+            }
+        }
+        //y排
+        for(int i=0;i<9;i++)
+        {
+            if(i==x)
+                continue;
+            if(numbers[i][y]!=0)
+            {
+                if(v==numbers[i][y])
+                    return false;
+            }
+        }
+        //小九宫格
+        int x0=(x/3)*3;
+        int y0=(y/3)*3;
+        for(int i=0;i<9;i++)
+        {
+            if(x0+i%3==x&&y0+i/3==y)
+                continue;
+            if(numbers[x0+i%3][y0+i/3]!=0)
+            {
+                if(v==numbers[x0+i%3][y0+i/3])
+                    return false;
+            }
+        }
+        return true;
+    }
+
     //设置选定的数字
     public void setTitle(int i,int x,int y){
         if(numbers[x][y] == i)
@@ -176,7 +257,7 @@ public class MyGame {
             isMask[x][y]--;
             return;
         }
-        if(!mGenerater.isNoConflict(numbers,i,x,y))
+        if(!notUsed(x,y,i))
             return;
         if(isMask[x][y]==0)        //如果原来标记为0则直接设置一个数字
         {
@@ -211,36 +292,15 @@ public class MyGame {
 
     //判断游戏结束
     public boolean youWin(){
-        int t=0;
         for (int i=0;i<9;i++){
             for (int j=0;j<9;j++){
-                if (numbers[i][j]!=0){
-                    t++;
-
+                if (!notUsedIncluDig(i,j,numbers[i][j])){
+                    return false;
                 }
+                if(numbers[i][j]==0)
+                    return false;
             }
         }
-        Log.d("TNumber",String.valueOf(t));
-        if (t==81){
-
-            return true;
-
-            /*AlertDialog.Builder builder=new AlertDialog.Builder(context);
-            builder.setTitle("Tips")
-                    .setMessage("You Win !")
-                    .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            System.exit(0);
-                        }
-                    }).show();*/
-        }
-        return false;
+        return true;
     }
 }
